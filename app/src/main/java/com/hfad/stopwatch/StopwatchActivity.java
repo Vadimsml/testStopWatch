@@ -14,14 +14,23 @@ public class StopwatchActivity extends Activity implements View.OnClickListener 
     public Button mBtnStop;
     public Button mBtnReset;
 
+    private static final String SECONDS="anything";
+    private static final String RUNNING="com.hfad.stopwatch";
+
 
     private int mSeconds = 0;
-    private boolean running = false;
+    private boolean mRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stopwatch);
+
+        if (savedInstanceState!=null){
+            mSeconds=savedInstanceState.getInt(SECONDS);
+            mRunning=savedInstanceState.getBoolean(RUNNING);
+        }
+
         mBtnStart = findViewById(R.id.btn_start);
         mBtnStop = findViewById(R.id.btn_stop);
         mBtnReset = findViewById(R.id.btn_reset);
@@ -38,15 +47,15 @@ public class StopwatchActivity extends Activity implements View.OnClickListener 
         switch (v.getId()) {
             case R.id.btn_start:
                 //code
-                running = true;
+                mRunning = true;
                 break;
             case R.id.btn_stop:
                 //code
-                running = false;
+                mRunning = false;
                 break;
             case R.id.btn_reset:
                 //code
-                running = false;
+                mRunning = false;
                 mSeconds = 0;
                 break;
         }
@@ -60,18 +69,24 @@ public class StopwatchActivity extends Activity implements View.OnClickListener 
             public void run () {
 
                int hours = mSeconds / 3600;
-                int minets = (mSeconds % 3600) / 60;
-                int seconds = mSeconds % 60;
+               int minutes = (mSeconds % 3600) / 60;
+               int seconds = mSeconds % 60;
 
-                String time = String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minets, seconds);
+                String time = String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, seconds);
                 timeView.setText(time);
 
-                if (running == true) {
+                if (mRunning == true) {
                     mSeconds++;
                 }
                 handler.postDelayed(this, 1000);
+
             }
         });
+    }
 
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(SECONDS, mSeconds);
+        savedInstanceState.putBoolean(RUNNING, mRunning);
     }
 }
